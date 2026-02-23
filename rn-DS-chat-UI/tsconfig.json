@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "rn-ds-chat-ui": ["./src/index"]
+      "react-native-ds-chat": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

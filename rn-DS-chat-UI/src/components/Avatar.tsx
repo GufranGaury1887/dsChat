@@ -8,8 +8,10 @@ const AVATAR_SIZE = moderateScale(36);
 function getInitials(name?: string): string {
   if (!name) return "?";
   const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
-  return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  if (parts.length === 1) return (parts[0]?.charAt(0) ?? "?").toUpperCase();
+  return (
+    (parts[0]?.charAt(0) ?? "") + (parts[parts.length - 1]?.charAt(0) ?? "")
+  ).toUpperCase();
 }
 
 function hashStringToColor(str: string): string {
@@ -38,7 +40,7 @@ const AvatarComponent: React.FC<AvatarProps> = ({
   );
 
   const backgroundColor = useMemo(
-    () => hashStringToColor(user._id),
+    () => hashStringToColor(String(user._id)),
     [user._id],
   );
 

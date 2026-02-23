@@ -1,16 +1,41 @@
 const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ] as const;
 
 const SHORT_MONTHS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
 ] as const;
 
 const DAYS = [
-  'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-  'Thursday', 'Friday', 'Saturday',
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
 ] as const;
 
 function toDate(value: Date | number): Date {
@@ -47,11 +72,11 @@ export function formatTime(date: Date | number, format?: string): string {
   const hours = d.getHours();
   const minutes = d.getMinutes();
 
-  if (format === '24h') {
+  if (format === "24h") {
     return `${pad(hours)}:${pad(minutes)}`;
   }
 
-  const period = hours >= 12 ? 'PM' : 'AM';
+  const period = hours >= 12 ? "PM" : "AM";
   const h12 = hours % 12 || 12;
   return `${h12}:${pad(minutes)} ${period}`;
 }
@@ -63,8 +88,8 @@ export function formatDayHeader(date: Date | number, format?: string): string {
     return formatCustomDate(d, format);
   }
 
-  if (isToday(d)) return 'Today';
-  if (isYesterday(d)) return 'Yesterday';
+  if (isToday(d)) return "Today";
+  if (isYesterday(d)) return "Yesterday";
 
   const now = new Date();
   const diffDays = Math.floor(
@@ -72,23 +97,23 @@ export function formatDayHeader(date: Date | number, format?: string): string {
   );
 
   if (diffDays < 7) {
-    return DAYS[d.getDay()];
+    return DAYS[d.getDay()] ?? "";
   }
 
   if (d.getFullYear() === now.getFullYear()) {
-    return `${SHORT_MONTHS[d.getMonth()]} ${d.getDate()}`;
+    return `${SHORT_MONTHS[d.getMonth()] ?? ""} ${d.getDate()}`;
   }
 
-  return `${SHORT_MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  return `${SHORT_MONTHS[d.getMonth()] ?? ""} ${d.getDate()}, ${d.getFullYear()}`;
 }
 
 function formatCustomDate(date: Date, format: string): string {
   return format
-    .replace('YYYY', `${date.getFullYear()}`)
-    .replace('YY', `${date.getFullYear()}`.slice(-2))
-    .replace('MMMM', MONTHS[date.getMonth()])
-    .replace('MMM', SHORT_MONTHS[date.getMonth()])
-    .replace('MM', pad(date.getMonth() + 1))
-    .replace('DD', pad(date.getDate()))
-    .replace('D', `${date.getDate()}`);
+    .replace("YYYY", `${date.getFullYear()}`)
+    .replace("YY", `${date.getFullYear()}`.slice(-2))
+    .replace("MMMM", MONTHS[date.getMonth()] ?? "")
+    .replace("MMM", SHORT_MONTHS[date.getMonth()] ?? "")
+    .replace("MM", pad(date.getMonth() + 1))
+    .replace("DD", pad(date.getDate()))
+    .replace("D", `${date.getDate()}`);
 }
