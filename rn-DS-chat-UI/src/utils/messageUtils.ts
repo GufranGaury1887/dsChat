@@ -1,5 +1,5 @@
-import type { Message, ChatUser } from '../types';
-import { isSameDay } from './dateUtils';
+import type { Message, ChatUser } from "../types";
+import { isSameDay } from "./dateUtils";
 
 let messageIdCounter = 0;
 
@@ -18,7 +18,7 @@ export function createMessage(
     text,
     createdAt: new Date(),
     user,
-    status: 'sending',
+    status: "sending",
     ...overrides,
   };
 }
@@ -43,13 +43,16 @@ export function shouldShowAvatar(
   return message.user._id !== nextMessage.user._id;
 }
 
-export function groupMessagesByDate(messages: Message[]): Map<string, Message[]> {
+export function groupMessagesByDate(
+  messages: Message[],
+): Map<string, Message[]> {
   const groups = new Map<string, Message[]>();
 
   for (const message of messages) {
-    const date = message.createdAt instanceof Date
-      ? message.createdAt
-      : new Date(message.createdAt);
+    const date =
+      message.createdAt instanceof Date
+        ? message.createdAt
+        : new Date(message.createdAt);
     const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 
     const existing = groups.get(key);

@@ -20,7 +20,10 @@ const MessageRowComponent: React.FC<MessageRowProps> = ({
   animateMessages = false,
   timeFormat,
 }) => {
-  const { opacity, translateY } = useAnimatedMessage(animateMessages);
+  const { opacity, translateY, scale, translateX } = useAnimatedMessage(
+    animateMessages,
+    isCurrentUser,
+  );
 
   const bubbleProps = {
     message,
@@ -58,7 +61,12 @@ const MessageRowComponent: React.FC<MessageRowProps> = ({
       style={[
         styles.row,
         isCurrentUser ? styles.rowRight : styles.rowLeft,
-        animateMessages ? { opacity, transform: [{ translateY }] } : undefined,
+        animateMessages
+          ? {
+              opacity,
+              transform: [{ translateY }, { translateX }, { scale }],
+            }
+          : undefined,
       ]}
     >
       {!isCurrentUser && avatarElement}

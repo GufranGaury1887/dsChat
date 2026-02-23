@@ -4,7 +4,7 @@ export {
   isYesterday,
   formatTime,
   formatDayHeader,
-} from './dateUtils';
+} from "./dateUtils";
 
 export {
   generateMessageId,
@@ -13,4 +13,4 @@ export {
   shouldShowDaySeparator,
   shouldShowAvatar,
   groupMessagesByDate,
-} from './messageUtils';
+} from "./messageUtils";

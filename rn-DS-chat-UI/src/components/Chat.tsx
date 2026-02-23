@@ -4,7 +4,7 @@ import {
   useSafeAreaInsets,
   SafeAreaProvider,
 } from "react-native-safe-area-context";
-import type { ChatProps } from "../types";
+import type { ChatProps, Message } from "../types";
 import { DEFAULT_THEME, mergeTheme } from "../theme";
 import { createMessage } from "../utils/messageUtils";
 import { MessageList } from "./MessageList";
@@ -203,10 +203,35 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Chat: React.FC<ChatProps> = (props) => {
+/**
+ * Chat component interface with static helpers (similar to GiftedChat).
+ */
+interface ChatComponent extends React.FC<ChatProps> {
+  /**
+   * Append new messages to the current messages array.
+   * New messages are prepended (newest-first) and duplicates are filtered by `_id`.
+   * Usage: `Chat.append(previousMessages, newMessages)`
+   */
+  append: (currentMessages: Message[], newMessages: Message[]) => Message[];
+}
+
+export const Chat: ChatComponent = ((props: ChatProps) => {
   return (
     <SafeAreaProvider>
       <ChatInner {...props} />
     </SafeAreaProvider>
   );
+}) as ChatComponent;
+
+/**
+ * Append new messages to the existing messages list.
+ * Drop-in replacement for `GiftedChat.append`.
+ */
+Chat.append = (
+  currentMessages: Message[],
+  newMessages: Message[],
+): Message[] => {
+  const existingIds = new Set(currentMessages.map((m) => m._id));
+  const uniqueNew = newMessages.filter((m) => !existingIds.has(m._id));
+  return [...uniqueNew, ...currentMessages];
 };

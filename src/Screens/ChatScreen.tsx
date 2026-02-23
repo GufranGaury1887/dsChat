@@ -9,6 +9,7 @@ import {
   Platform,
   Animated,
   Alert,
+  Keyboard,
 } from "react-native";
 import {
   Chat,
@@ -17,9 +18,9 @@ import {
   MessageBubbleProps,
   MessageStatus,
   formatTime,
-  moderateScale,
 } from "../../rn-DS-chat-UI/src";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { moderateScale } from "../utils/scaling";
 
 // ─── Status Icon ─────────────────────────────────────────────────────
 const StatusIcon: React.FC<{
@@ -237,7 +238,10 @@ const CustomInputToolbar: React.FC<InputToolbarProps> = ({
       <View style={toolbarStyles.inputRow}>
         {/* Attachment Button */}
         <TouchableOpacity
-          onPress={() => Alert.alert("Attachment button pressed")}
+          onPress={() => {
+            Keyboard.dismiss();
+            Alert.alert("Attachment button pressed");
+          }}
           style={[
             toolbarStyles.attachButton,
             { backgroundColor: theme.colors.inputBackground },
@@ -313,22 +317,43 @@ const CustomInputToolbar: React.FC<InputToolbarProps> = ({
 export default function ChatScreen() {
   const [messages, setMessages] = useState<Message[]>([
     {
-      _id: "1",
-      text: "Hello! Welcome to rn-DS-chat-UI",
+      _id: 1,
+      text: "Hello developer",
       createdAt: new Date(),
       user: {
-        _id: "2",
-        name: "Bot",
+        _id: 6,
+        name: "John Doe",
         avatar: "https://i.pravatar.cc/150?img=5",
       },
-      status: "read",
+    },
+    {
+      _id: 2,
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      createdAt: new Date(),
+      user: {
+        _id: 5,
+        name: "John Doe",
+        avatar: "https://i.pravatar.cc/150?img=5",
+      },
+    },
+    {
+      _id: 3,
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      createdAt: new Date(),
+      user: {
+        _id: 4,
+        name: "John Doe",
+        avatar: "https://i.pravatar.cc/150?img=5",
+      },
     },
   ]);
 
   const currentUser = { _id: "1", name: "You" };
 
   const onSend = useCallback((newMessages: Message[]) => {
-    setMessages((prev) => [...newMessages, ...prev]);
+    setMessages((previousMessages) =>
+      Chat.append(previousMessages, newMessages),
+    );
   }, []);
 
   return (
@@ -338,9 +363,10 @@ export default function ChatScreen() {
         user={currentUser}
         onSend={onSend}
         placeholder="Type a message..."
-        showReceiverAvatar
+        isTyping={false}
+        animateMessages={true}
         renderBubble={(props) => <CustomMessageBubble {...props} />}
-        // renderInputToolbar={(props) => <CustomInputToolbar {...props} />}
+        renderInputToolbar={(props) => <CustomInputToolbar {...props} />}
       />
     </SafeAreaView>
   );

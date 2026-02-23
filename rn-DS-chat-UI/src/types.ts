@@ -11,7 +11,7 @@ import type {
 // ─── Core Data Types ───────────────────────────────────────────────
 
 export interface ChatUser {
-  _id: string;
+  _id: string | number;
   name?: string;
   avatar?: string | (() => ReactNode);
 }
@@ -24,7 +24,7 @@ export type MessageStatus =
   | "failed";
 
 export interface Message {
-  _id: string;
+  _id: string | number;
   text: string;
   createdAt: Date | number;
   user: ChatUser;

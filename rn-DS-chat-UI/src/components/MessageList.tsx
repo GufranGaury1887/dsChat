@@ -43,7 +43,7 @@ const MessageListComponent: React.FC<MessageListProps> = ({
 }) => {
   const flatListRef = useRef<FlatList<Message>>(null);
 
-  const keyExtractor = useCallback((item: Message) => item._id, []);
+  const keyExtractor = useCallback((item: Message) => String(item._id), []);
 
   const getAdjacentMessage = useCallback(
     (index: number): Message | undefined => {
