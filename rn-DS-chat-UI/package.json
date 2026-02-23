@@ -1,0 +1,73 @@
+{
+  "name": "rn-ds-chat-ui",
+  "version": "1.0.0",
+  "description": "A modern, customizable, and production-ready Chat UI library for React Native",
+  "main": "lib/commonjs/index.js",
+  "module": "lib/module/index.js",
+  "types": "lib/typescript/src/index.d.ts",
+  "react-native": "src/index.ts",
+  "source": "src/index.ts",
+  "files": [
+    "src",
+    "lib",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__"
+  ],
+  "scripts": {
+    "build": "bob build",
+    "typescript": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "clean": "rm -rf lib",
+    "prepare": "bob build"
+  },
+  "keywords": [
+    "react-native",
+    "chat",
+    "ui",
+    "messaging",
+    "chat-ui",
+    "gifted-chat",
+    "typescript",
+    "sdk"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/rn-DS-chat-UI"
+  },
+  "author": "DS",
+  "license": "MIT",
+  "homepage": "https://github.com/your-username/rn-DS-chat-UI#readme",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-native": ">=0.70.0",
+    "react-native-safe-area-context": ">=4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-native-safe-area-context": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.0",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-native-builder-bob": "^0.35.0",
+    "react-native-safe-area-context": "~5.6.0",
+    "typescript": "~5.9.2"
+  },
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      [
+        "commonjs",
+        {
+          "esm": true
+        }
+      ],
+      "module",
+      "typescript"
+    ]
+  }
+}
