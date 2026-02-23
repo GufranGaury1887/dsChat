@@ -1,6 +1,6 @@
 # 💬 dsChat
 
-A modern, production-ready **React Native chat application** powered by [`rn-DS-chat-UI`](./rn-DS-chat-UI) — a fully customizable, TypeScript-first chat UI library built from the ground up.
+A modern, production-ready **React Native chat application** powered by [`react-native-ds-chat`](./rn-DS-chat-UI) — a fully customizable, TypeScript-first chat UI library built from the ground up.
 
 ---
 
@@ -15,7 +15,7 @@ A modern, production-ready **React Native chat application** powered by [`rn-DS-
 - Image attachment support
 - Safe area handling for modern devices
 
-### Library (`rn-DS-chat-UI`)
+### Library (`react-native-ds-chat`)
 
 - Full chat UI with message bubbles, avatars, timestamps & status indicators
 - Optimized `FlatList`-based rendering with memoization
@@ -39,7 +39,7 @@ A modern, production-ready **React Native chat application** powered by [`rn-DS-
 | **Language**        | TypeScript `5.9`                                                                  |
 | **React**           | React `19.1`                                                                      |
 | **Architecture**    | New Architecture enabled                                                          |
-| **Chat UI Library** | `rn-DS-chat-UI` (local package)                                                   |
+| **Chat UI Library** | [`react-native-ds-chat`](https://www.npmjs.com/package/react-native-ds-chat)      |
 | **Build Tool**      | [react-native-builder-bob](https://github.com/callstack/react-native-builder-bob) |
 
 ---
@@ -181,7 +181,7 @@ A custom `CustomInputToolbar` component is included with:
 The library supports complete theming with built-in light and dark themes:
 
 ```tsx
-import { Chat, DARK_THEME } from 'rn-ds-chat-ui';
+import { Chat, DARK_THEME } from 'react-native-ds-chat';
 
 // Built-in dark theme
 <Chat theme={DARK_THEME} ... />
@@ -203,12 +203,16 @@ import { Chat, DARK_THEME } from 'rn-ds-chat-ui';
 
 ## 📦 Library Usage
 
-The `rn-DS-chat-UI` library is a standalone npm package located in the `rn-DS-chat-UI/` directory. It can be published to npm independently.
+The `react-native-ds-chat` library is published on npm. Install it with:
+
+```bash
+npm install react-native-ds-chat
+```
 
 ### Quick Start
 
 ```tsx
-import { Chat, Message } from "rn-ds-chat-ui";
+import { Chat, Message } from "react-native-ds-chat";
 
 const ChatScreen = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -242,7 +246,7 @@ import {
   SendButton,
   TypingIndicator,
   DaySeparator,
-} from "rn-ds-chat-ui";
+} from "react-native-ds-chat";
 ```
 
 ### Utility Functions
@@ -255,7 +259,7 @@ import {
   isSameDay,
   isToday,
   moderateScale,
-} from "rn-ds-chat-ui";
+} from "react-native-ds-chat";
 ```
 
 > 📖 For complete library documentation, see [`rn-DS-chat-UI/README.md`](./rn-DS-chat-UI/README.md)

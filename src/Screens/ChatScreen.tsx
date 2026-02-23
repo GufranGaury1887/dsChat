@@ -18,7 +18,8 @@ import {
   MessageBubbleProps,
   MessageStatus,
   formatTime,
-} from "../../rn-DS-chat-UI/src";
+  DARK_THEME,
+} from "react-native-ds-chat";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { moderateScale } from "../utils/scaling";
 
@@ -359,6 +360,7 @@ export default function ChatScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Chat
+        theme={DARK_THEME}
         messages={messages}
         user={currentUser}
         onSend={onSend}
