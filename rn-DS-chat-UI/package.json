@@ -1,6 +1,6 @@
 {
   "name": "react-native-ds-chat",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A modern, customizable, and production-ready Chat UI library for React Native",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
@@ -35,7 +35,7 @@
     "type": "git",
     "url": "https://github.com/GufranGaury1887/dsChat"
   },
-  "author": "DS",
+  "author": "Gufran Gaury",
   "license": "MIT",
   "homepage": "https://github.com/GufranGaury1887/dsChat#readme",
   "peerDependencies": {
