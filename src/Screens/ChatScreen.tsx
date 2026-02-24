@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useRef, useMemo } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useMemo,
+  useEffect,
+} from "react";
 import {
   StyleSheet,
   View,
@@ -10,6 +16,9 @@ import {
   Animated,
   Alert,
   Keyboard,
+  ActionSheetIOS,
+  Linking,
+  Switch,
 } from "react-native";
 import {
   Chat,
@@ -19,9 +28,24 @@ import {
   MessageStatus,
   formatTime,
   DARK_THEME,
+  DEFAULT_THEME,
 } from "react-native-ds-chat";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { moderateScale } from "../utils/scaling";
+import {
+  check,
+  request,
+  PERMISSIONS,
+  RESULTS,
+  openSettings,
+  Permission,
+} from "react-native-permissions";
+import {
+  launchCamera,
+  launchImageLibrary,
+  CameraOptions,
+  ImageLibraryOptions,
+} from "react-native-image-picker";
 
 // ─── Status Icon ─────────────────────────────────────────────────────
 const StatusIcon: React.FC<{
@@ -189,12 +213,15 @@ const AttachmentIcon: React.FC<{ color: string }> = ({ color }) => (
 );
 
 // ─── Custom Input Toolbar ────────────────────────────────────────────
-const CustomInputToolbar: React.FC<InputToolbarProps> = ({
+const CustomInputToolbar: React.FC<
+  InputToolbarProps & { onPickImage?: () => void }
+> = ({
   text,
   onTextChanged,
   onSend,
   placeholder = "Type a message...",
   theme,
+  onPickImage,
 }) => {
   const inputRef = useRef<TextInput>(null);
   const sendScale = useRef(new Animated.Value(1)).current;
@@ -241,7 +268,7 @@ const CustomInputToolbar: React.FC<InputToolbarProps> = ({
         <TouchableOpacity
           onPress={() => {
             Keyboard.dismiss();
-            Alert.alert("Attachment button pressed");
+            onPickImage?.();
           }}
           style={[
             toolbarStyles.attachButton,
@@ -316,6 +343,17 @@ const CustomInputToolbar: React.FC<InputToolbarProps> = ({
 
 // ─── Chat Screen ─────────────────────────────────────────────────────
 export default function ChatScreen() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const activeTheme = isDarkMode ? DARK_THEME : DEFAULT_THEME;
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsTyping((prev) => !prev);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
   const [messages, setMessages] = useState<Message[]>([
     {
       _id: 1,
@@ -357,18 +395,237 @@ export default function ChatScreen() {
     );
   }, []);
 
+  // ─── Permission helper ──────────────────────────────────────────────
+  const requestPermission = useCallback(
+    async (
+      permission: Permission,
+      permissionName: string,
+    ): Promise<boolean> => {
+      const status = await check(permission);
+
+      switch (status) {
+        case RESULTS.GRANTED:
+        case RESULTS.LIMITED:
+          return true;
+
+        case RESULTS.DENIED: {
+          const result = await request(permission);
+          return result === RESULTS.GRANTED || result === RESULTS.LIMITED;
+        }
+
+        case RESULTS.BLOCKED:
+          Alert.alert(
+            `${permissionName} Permission Blocked`,
+            `Please enable ${permissionName.toLowerCase()} access in your device Settings to use this feature.`,
+            [
+              { text: "Cancel", style: "cancel" },
+              { text: "Open Settings", onPress: () => openSettings() },
+            ],
+          );
+          return false;
+
+        case RESULTS.UNAVAILABLE:
+          Alert.alert(
+            "Not Available",
+            `${permissionName} is not available on this device.`,
+          );
+          return false;
+
+        default:
+          return false;
+      }
+    },
+    [],
+  );
+
+  // ─── Open Camera ───────────────────────────────────────────────────
+  const handleOpenCamera = useCallback(async () => {
+    const cameraPermission = Platform.select({
+      ios: PERMISSIONS.IOS.CAMERA,
+      android: PERMISSIONS.ANDROID.CAMERA,
+    });
+
+    if (!cameraPermission) return;
+
+    const hasPermission = await requestPermission(cameraPermission, "Camera");
+    if (!hasPermission) return;
+
+    const options: CameraOptions = {
+      mediaType: "photo",
+      quality: 0.8,
+      saveToPhotos: false,
+    };
+
+    const result = await launchCamera(options);
+
+    if (result.assets && result.assets.length > 0 && result.assets[0].uri) {
+      const imageMessage: Message = {
+        _id: Date.now(),
+        text: "",
+        createdAt: new Date(),
+        user: currentUser,
+        image: result.assets[0].uri,
+        status: "sent",
+      };
+      onSend([imageMessage]);
+    }
+  }, [currentUser, onSend, requestPermission]);
+
+  // ─── Open Gallery ──────────────────────────────────────────────────
+  const handleOpenGallery = useCallback(async () => {
+    const photoPermission = Platform.select({
+      ios: PERMISSIONS.IOS.PHOTO_LIBRARY,
+      android: PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
+    });
+
+    if (!photoPermission) return;
+
+    const hasPermission = await requestPermission(
+      photoPermission,
+      "Photo Library",
+    );
+    if (!hasPermission) return;
+
+    const options: ImageLibraryOptions = {
+      mediaType: "photo",
+      quality: 0.8,
+      selectionLimit: 1,
+    };
+
+    const result = await launchImageLibrary(options);
+
+    if (result.assets && result.assets.length > 0 && result.assets[0].uri) {
+      const imageMessage: Message = {
+        _id: Date.now(),
+        text: "",
+        createdAt: new Date(),
+        user: currentUser,
+        image: result.assets[0].uri,
+        status: "sent",
+      };
+      onSend([imageMessage]);
+    }
+  }, [currentUser, onSend, requestPermission]);
+
+  // ─── Attachment picker (Camera / Gallery) ──────────────────────────
+  const handlePickImage = useCallback(() => {
+    const options = ["Take Photo", "Choose from Gallery", "Cancel"];
+    const cancelButtonIndex = 2;
+
+    if (Platform.OS === "ios") {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options,
+          cancelButtonIndex,
+          title: "Select Image",
+          message: "Choose how you want to add an image",
+        },
+        (buttonIndex) => {
+          if (buttonIndex === 0) handleOpenCamera();
+          else if (buttonIndex === 1) handleOpenGallery();
+        },
+      );
+    } else {
+      // Android — use Alert as a simple action sheet
+      Alert.alert("Select Image", "Choose how you want to add an image", [
+        { text: "Take Photo", onPress: handleOpenCamera },
+        { text: "Choose from Gallery", onPress: handleOpenGallery },
+        { text: "Cancel", style: "cancel" },
+      ]);
+    }
+  }, [handleOpenCamera, handleOpenGallery]);
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: activeTheme.colors.background },
+      ]}
+    >
+      {/* ─── Header ─────────────────────────────────────────── */}
+      <View
+        style={[
+          headerStyles.container,
+          {
+            backgroundColor: activeTheme.colors.background,
+            borderBottomColor: activeTheme.colors.border,
+          },
+        ]}
+      >
+        {/* Left: User Details */}
+        <View style={headerStyles.userInfo}>
+          <Image
+            source={{ uri: "https://i.pravatar.cc/150?img=5" }}
+            style={headerStyles.avatar}
+          />
+          <View style={headerStyles.textContainer}>
+            <Text
+              style={[
+                headerStyles.userName,
+                { color: isDarkMode ? "#FFFFFF" : "#1A1A2E" },
+              ]}
+              numberOfLines={1}
+            >
+              John Doe
+            </Text>
+            <View style={headerStyles.statusRow}>
+              <View
+                style={[headerStyles.onlineDot, { backgroundColor: "#34C759" }]}
+              />
+              <Text
+                style={[
+                  headerStyles.statusText,
+                  {
+                    color: isDarkMode
+                      ? "rgba(255,255,255,0.5)"
+                      : "rgba(0,0,0,0.45)",
+                  },
+                ]}
+              >
+                Online
+              </Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Right: Theme Switch */}
+        <View style={headerStyles.switchContainer}>
+          <Text
+            style={[
+              headerStyles.switchLabel,
+              {
+                color: isDarkMode
+                  ? "rgba(255,255,255,0.5)"
+                  : "rgba(0,0,0,0.45)",
+              },
+            ]}
+          >
+            {isDarkMode ? "🌙" : "☀️"}
+          </Text>
+          <Switch
+            value={isDarkMode}
+            onValueChange={setIsDarkMode}
+            trackColor={{ false: "#E0E0E0", true: "#5B4FCF" }}
+            thumbColor={isDarkMode ? "#FFFFFF" : "#FFFFFF"}
+            ios_backgroundColor="#E0E0E0"
+          />
+        </View>
+      </View>
+
+      {/* ─── Chat ───────────────────────────────────────────── */}
       <Chat
-        theme={DARK_THEME}
         messages={messages}
         user={currentUser}
         onSend={onSend}
         placeholder="Type a message..."
-        isTyping={false}
-        animateMessages={true}
+        isTyping={isTyping}
+        isLoadingEarlier={true}
+        animateMessages
+        theme={activeTheme}
         renderBubble={(props) => <CustomMessageBubble {...props} />}
-        renderInputToolbar={(props) => <CustomInputToolbar {...props} />}
+        renderInputToolbar={(props) => (
+          <CustomInputToolbar {...props} onPickImage={handlePickImage} />
+        )}
       />
     </SafeAreaView>
   );
@@ -378,7 +635,60 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+  },
+});
+
+// ─── Header Styles ─────────────────────────────────────────────────
+const headerStyles = StyleSheet.create({
+  container: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: moderateScale(16),
+    paddingVertical: moderateScale(12),
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  userInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+  },
+  avatar: {
+    width: moderateScale(42),
+    height: moderateScale(42),
+    borderRadius: moderateScale(21),
+    marginRight: moderateScale(12),
+  },
+  textContainer: {
+    flexShrink: 1,
+  },
+  userName: {
+    fontSize: moderateScale(16),
+    fontWeight: "700",
+    letterSpacing: 0.2,
+  },
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: moderateScale(2),
+  },
+  onlineDot: {
+    width: moderateScale(7),
+    height: moderateScale(7),
+    borderRadius: moderateScale(3.5),
+    marginRight: moderateScale(5),
+  },
+  statusText: {
+    fontSize: moderateScale(12),
+    fontWeight: "500",
+  },
+  switchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: moderateScale(8),
+  },
+  switchLabel: {
+    fontSize: moderateScale(18),
   },
 });
 

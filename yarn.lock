@@ -3532,13 +3532,23 @@ react-is@^18.0.0:
 
 react-native-ds-chat@^1.0.1:
   version "1.0.1"
-  resolved "https://registry.yarnpkg.com/react-native-ds-chat/-/react-native-ds-chat-1.0.1.tgz#498dd254715633826d520f0fc1264ab794282ae1"
+  resolved "https://registry.npmjs.org/react-native-ds-chat/-/react-native-ds-chat-1.0.1.tgz"
   integrity sha512-OFwWPbjdmr2LaZAJzL1qsXmJTb4ZFpEPRTpe8s43vw6ne9AV35wxGmsc5JlkdCYFeupWmZsHKFKn0MfRXeh/6w==
+
+react-native-image-picker@^8.2.1:
+  version "8.2.1"
+  resolved "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-8.2.1.tgz"
+  integrity sha512-FBeGYJGFDjMdGCcyubDJgBAPCQ4L1D3hwLXyUU91jY9ahOZMTbluceVvRmrEKqnDPFJ0gF1NVhJ0nr1nROFLdg==
 
 react-native-is-edge-to-edge@^1.2.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-1.2.1.tgz"
   integrity sha512-FLbPWl/MyYQWz+KwqOZsSyj2JmLKglHatd3xLZWskXOpRaio4LfEDEz8E/A6uD8QoTHW6Aobw1jbEwK7KMgR7Q==
+
+react-native-permissions@^5.4.4:
+  version "5.4.4"
+  resolved "https://registry.npmjs.org/react-native-permissions/-/react-native-permissions-5.4.4.tgz"
+  integrity sha512-WB5lRCBGXETfuaUhem2vgOceb9+URCeyfKpLGFSwoOffLuyJCA6+NTR3l1KLkrK4Ykxsig37z16/shUVufmt7A==
 
 react-native-safe-area-context@^5.6.2:
   version "5.6.2"
