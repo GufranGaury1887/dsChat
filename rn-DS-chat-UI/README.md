@@ -192,15 +192,6 @@ import {
 } from "react-native-ds-chat";
 ```
 
-## Publishing to npm
-
-```bash
-cd rn-DS-chat-UI
-npm install
-npm run build
-npm publish
-```
-
 ## License
 
 MIT
