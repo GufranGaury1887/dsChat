@@ -2,6 +2,20 @@
 
 A modern, customizable, and production-ready Chat UI library for React Native — built with TypeScript, functional components, and performance in mind.
 
+## 📱 Preview
+
+### Screenshot
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/GufranGaury1887/dsChat/main/screenshot/ChatScreen.png" alt="Chat Screen" width="300" />
+</p>
+
+### Demo Video
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/GufranGaury1887/dsChat/main/screenshot/chatVideo.gif" alt="Chat Demo" width="300" />
+</p>
+
 ## Features
 
 - Full chat UI with message bubbles, avatars, timestamps, and status indicators
