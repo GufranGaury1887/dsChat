@@ -4,6 +4,7 @@ import {
   View,
   Text,
   StyleSheet,
+  Platform,
   ListRenderItemInfo,
 } from "react-native";
 import type { Message, MessageListProps } from "../types";
@@ -207,7 +208,7 @@ const MessageListComponent: React.FC<MessageListProps> = ({
       ListFooterComponent={inverted ? ListHeaderComponent : undefined}
       ListHeaderComponent={inverted ? undefined : ListHeaderComponent}
       showsVerticalScrollIndicator={false}
-      keyboardDismissMode="interactive"
+      keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
       keyboardShouldPersistTaps="handled"
       removeClippedSubviews={false}
       maxToRenderPerBatch={15}

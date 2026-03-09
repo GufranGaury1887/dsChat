@@ -1,6 +1,6 @@
 {
   "name": "react-native-ds-chat",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "A modern, customizable, and production-ready Chat UI library for React Native",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",

@@ -17,7 +17,6 @@ import {
   Alert,
   Keyboard,
   ActionSheetIOS,
-  Linking,
   Switch,
 } from "react-native";
 import {
@@ -347,12 +346,12 @@ export default function ChatScreen() {
   const activeTheme = isDarkMode ? DARK_THEME : DEFAULT_THEME;
   const [isTyping, setIsTyping] = useState(false);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsTyping((prev) => !prev);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setIsTyping((prev) => !prev);
+  //   }, 4000);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const [messages, setMessages] = useState<Message[]>([
     {

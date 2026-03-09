@@ -119,12 +119,8 @@ const ChatInner: React.FC<ChatProps> = ({
   );
 
   const keyboardBehavior =
-    Platform.OS === "ios" ? ("padding" as const) : undefined;
+    Platform.OS === "ios" ? ("padding" as const) : ("height" as const);
 
-  // Determine the correct keyboardVerticalOffset:
-  // 1. If the consumer passed an explicit value, use it
-  // 2. If we measured the container's Y position on screen, use that
-  // 3. Fallback to insets.top (works when Chat is at the root level)
   const keyboardOffset =
     Platform.OS === "ios"
       ? (keyboardVerticalOffsetProp ?? measuredOffset ?? insets.top)
